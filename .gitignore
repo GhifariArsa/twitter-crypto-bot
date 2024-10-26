@@ -3,3 +3,6 @@
 
 # Virtual Environment
 /venv
+
+# Logging files
+*.log

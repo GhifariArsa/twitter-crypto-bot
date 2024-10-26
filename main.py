@@ -75,6 +75,7 @@ if __name__ == "__main__":
     tweet_category_gainers = create_tweet(top_category_gainers, label="Categories", key="market_cap_change_24h", gainer=True)
     tweet_category_losers = create_tweet(top_category_losers, label="Categories", key="market_cap_change_24h", gainer=False)
     
+    print("TWEETING: " + today)
     try:
         # Similarly tweet the categories
         response = client.create_tweet(text=tweet_category_gainers)
@@ -86,6 +87,6 @@ if __name__ == "__main__":
         gainers_tweet_id = response.data['id']
         client.create_tweet(text=tweet_coin_losers, in_reply_to_tweet_id=gainers_tweet_id)
         
-        print("Tweeted successfully!")
+        print("\tTweeted successfully!")
     except Exception as e:
-        print(f"Error tweeting: {e}")
+        print(f"\tError tweeting: {e}")
