@@ -35,6 +35,12 @@ def get_coin_data():
     coins = response.json()
     return coins
 
+def get_coin_category_data():
+    url = 'https://api.coingecko.com/api/v3/coins/categories'
+    response = requests.get(url)
+    categories = response.json()
+    return categories
+
 def get_top_gainers(coin):
     sorted_coins = sorted(coin, key=lambda x: x['price_change_percentage_24h'], reverse=True)
     top_gainers = sorted_coins[:5] 
@@ -45,23 +51,32 @@ def get_top_losers(coin):
     top_losers = sorted_coins[:5] 
     return top_losers
 
-def create_tweet(top_gainers, top_losers):
-    tweet = "Top 24hr Gainers and Losers - " + today + '\n'
+def create_tweet(top_gainers, gainer=True):
+    tweet = f"Top 5 24-Hour {'Gainers' if gainer else 'Losers'} - " + today + '\n\n'
     for coin in top_gainers:
-        tweet += f"${coin['symbol'].upper()} ({coin['name']}): {coin['price_change_percentage_24h']:.2f}%\n"
-    
+        tweet += f"{'📈' if gainer else '📉'} ${coin['symbol'].upper()} ({coin['name']}): A${coin['current_price']} ({'+' if coin['price_change_percentage_24h'] >= 0 else ''}{coin['price_change_percentage_24h']:.2f}%)\n"
+    tweet += '\n #emirbelievedinsomething'
     return tweet
 
-def tweet_top_gainers():
+if __name__ == "__main__":
     coin = get_coin_data()
-    tweet = get_top_gainers_and_loss(coin)
+    top_gainer = get_top_gainers(coin)
+    top_losers = get_top_losers(coin)
+    
+    # Create tweets
+    tweet_gainers = create_tweet(top_gainer, gainer=True)
+    tweet_losers = create_tweet(top_losers, gainer=False)
+    
+    # Tweet the gainers
     try:
-        client.create_tweet(text=tweet)
+        response = client.create_tweet(text=tweet_gainers)
+        gainers_tweet_id = response.data['id']  # Get the ID of the gainers tweet
+        # Tweet the losers as a reply to the gainers tweet
+        client.create_tweet(text=tweet_losers, in_reply_to_tweet_id=gainers_tweet_id)
         print("Tweeted successfully!")
     except Exception as e:
         print(f"Error tweeting: {e}")
 
-# Call the function to tweet
-if __name__ == "__main__":
-    coin = get_coin_data()
-    print(get_top_gainers(coin))
+
+
+
