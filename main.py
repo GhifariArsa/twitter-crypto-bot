@@ -17,13 +17,16 @@ ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
 # Authenticate to Twitter
-client = tweepy.Client(consumer_key=API_KEY, consumer_secret=API_SECRET, access_token=ACCESS_TOKEN, access_token_secret=ACCESS_TOKEN_SECRET,)
+client = tweepy.Client( consumer_key=API_KEY, 
+                        consumer_secret=API_SECRET, 
+                        access_token=ACCESS_TOKEN, 
+                        access_token_secret=ACCESS_TOKEN_SECRET)
 
 # Get API Data
 def get_coin_data():
     url = 'https://api.coingecko.com/api/v3/coins/markets'
     params = {
-        'vs_currency': 'usd',
+        'vs_currency': 'aud',
         'order': 'market_cap_desc',
         'price_change_percentage': '24h',
         'sparkline': 'false'
